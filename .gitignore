@@ -1,0 +1,19 @@
+# Clojure
+target/
+.nrepl-port
+.lein-repl-history
+.lein-failures
+.clj-kondo/
+!.clj-kondo/config.edn
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.lsp/
+.calva/
+.vscode/
+
+# macOS
+.DS_Store
