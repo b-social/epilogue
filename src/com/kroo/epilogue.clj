@@ -76,7 +76,7 @@
   ""
   [level msg data & {:keys [throwable logger-ns]}]
   `(let [ns# (str *ns*)]
-     (log* (LoggerFactory/getLogger (or ~logger-ns ns#))
+     (log* (LoggerFactory/getLogger ^String (or ~logger-ns ns#))
            ~level
            ~msg
            ~data
