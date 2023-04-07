@@ -75,8 +75,8 @@
 (defmacro log
   ""
   [level msg data & {:keys [throwable logger-ns]}]
-  `(let [ns# (or ~logger-ns (str *ns*))]
-     (log* (LoggerFactory/getLogger ns#)
+  `(let [ns# (str *ns*)]
+     (log* (LoggerFactory/getLogger (or ~logger-ns ns#))
            ~level
            ~msg
            ~data
@@ -91,7 +91,7 @@
      {:arglists '~'([msg data & {:keys [throwable logger-ns]}])}
      [msg# data# & {:as opts#}]
      (with-meta
-       `(log ~~level ~msg# ~data# ~(:throwable opts#))
+       `(log ~~level ~msg# ~data# opts#)
        ~'(meta &form))))
 
 (declare error warn info debug trace)
