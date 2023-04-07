@@ -73,7 +73,15 @@
            builder))))))
 
 (defmacro log
-  ""
+  "Logs a message (`msg`) and `data` at the specified logging `level`.  The log
+   will also include anything in `*context*` within the current dynamic scope.
+
+   `data` can be anything that implements the `clojure.core.protocols/IKVReduce`
+   protocol, but it is recommended to log only maps to avoid confusion.
+
+   Options:
+     - a `throwable` object to set as the \"cause\", and
+     - an override logger namespace (`logger-ns`)."
   [level msg data & {:keys [throwable logger-ns]}]
   `(let [ns# (str *ns*)]
      (log* (LoggerFactory/getLogger ^String (or ~logger-ns ns#))
@@ -87,13 +95,17 @@
   "Construct a convenience macro for a specific logging level."
   [level]
   `(defmacro ~(symbol level)
-     ""
-     {:arglists '~'([msg data & {:keys [throwable logger-ns]}])}
+     {:doc (format
+            "Log a message (`msg`) and `data` at the `%s` logging level.\n\n%s"
+            ~level
+            "  See `com.kroo.epilogue/log` for more details.")
+      :arglists '~'([msg data & {:keys [throwable logger-ns]}])}
      [msg# data# & {:as opts#}]
      (with-meta
        `(log ~~level ~msg# ~data# opts#)
        ~'(meta &form))))
 
+;; Generate convenience macros for the supported logging levels.
 (declare error warn info debug trace)
 (deflevel :error)
 (deflevel :warn)
