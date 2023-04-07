@@ -101,6 +101,13 @@
 (deflevel :debug)
 (deflevel :trace)
 
-(defmacro spy [])
+;; TODO
+(defmacro spy
+  "Log then return `data`.  Logs at `:debug` level by default."
+  ;; Should `msg` be an opt?
+  [msg# data# & {:as opts#}])
 
-(defmacro raise [])
+;; TODO
+(defmacro raise
+  "Log an error then throw."
+  [msg# data# & {:as opts#}])
