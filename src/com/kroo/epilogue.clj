@@ -43,34 +43,35 @@
    at a particular level."
   ^LoggingEventBuilder (NOPLoggingEventBuilder/singleton))
 
+(defn- ->str
+  "Cast `s` to a string while removing the leading `:` if `s` was a keyword."
+  ^String [s]
+  (if (keyword? s)
+    (subs (str s) 1)
+    (str s)))
+
 (defn- add-kv
   "Add a key value pair to an SLF4J log event."
   ^LoggingEventBuilder [^LoggingEventBuilder builder k ^Object v]
-  (.addKeyValue builder
-                (if (keyword? k)
-                  (subs (str k) 1)
-                  (str k))
-                v))
+  (.addKeyValue builder (->str k) v))
 
 (defn log*
   "Primitive logging function for Epilogue.
 
    Do not use this function directly!  Use the provided macros instead.
    Backwards compatibility is not guaranteed for this function."
-  [^Logger logger level ^String msg data ^Throwable throwable src]
+  [^Logger logger level msg data ^Throwable throwable src]
   (let [^LoggingEventBuilder builder (.atLevel logger (levels level))]
-    ;; Check the logging level is enabled then continue if so.
+    ;; Check the logging level is enabled and continue if so.
     (when-not (identical? builder nop)
-      (let [^LoggingEventBuilder builder
-            (as-> builder $
-              (.setMessage ^LoggingEventBuilder $ msg)
-              (add-kv ^LoggingEventBuilder $ ::source src)
-              (reduce-kv add-kv $ @*context*)
-              (reduce-kv add-kv $ data))]
-        (.log ^LoggingEventBuilder
-         (if throwable
-           (.setCause builder throwable)
-           builder))))))
+      (as-> builder $
+        (.setMessage $ (->str msg))
+        (add-kv $ ::source src)
+        (reduce-kv add-kv $ @*context*)
+        (reduce-kv add-kv $ data)
+        (cond-> $
+          throwable (as-> $$ (.setCause ^LoggingEventBuilder $$ throwable)))
+        (.log ^LoggingEventBuilder $)))))
 
 (defmacro log
   "Logs a message (`msg`) and `data` at the specified logging `level`.  The log
@@ -83,8 +84,9 @@
      - a `throwable` object to set as the \"cause\", and
      - an override logger namespace (`logger-ns`)."
   [level msg data & {:keys [throwable logger-ns]}]
-  `(let [ns# (str *ns*)]
-     (log* (LoggerFactory/getLogger ^String (or ~logger-ns ns#))
+  `(let [ns#  (str *ns*)
+         lns# (if-let [l# ~logger-ns] (str l#) ns#)]
+     (log* (LoggerFactory/getLogger ^String lns#)
            ~level
            ~msg
            ~data
@@ -95,10 +97,10 @@
   "Construct a convenience macro for a specific logging level."
   [level]
   `(defmacro ~(symbol level)
-     {:doc (format
-            "Log a message (`msg`) and `data` at the `%s` logging level.\n\n%s"
-            ~level
-            "  See `com.kroo.epilogue/log` for more details.")
+     {:doc (str "Log a message (`msg`) and `data` at the `"
+                ~level
+                "` logging level.\n\n  "
+                "See `com.kroo.epilogue/log` for more details.")
       :arglists '~'([msg data & {:keys [throwable logger-ns]}])}
      [msg# data# & {:as opts#}]
      (with-meta
