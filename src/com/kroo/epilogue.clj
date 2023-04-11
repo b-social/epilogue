@@ -4,8 +4,6 @@
            [org.slf4j.event Level]
            [org.slf4j.spi LoggingEventBuilder NOPLoggingEventBuilder]))
 
-(set! *warn-on-reflection* true)
-
 (def ^:private levels
   "Map of level names to SLF4J Level objects."
   {:error Level/ERROR
@@ -119,9 +117,9 @@
 (defmacro spy
   "Log then return `data`.  Logs at `:debug` level by default."
   ;; Should `msg` be an opt?
-  [msg# data# & {:as opts#}])
+  [msg data & {:as opts}])
 
 ;; TODO
 (defmacro raise
   "Log an error then throw."
-  [msg# data# & {:as opts#}])
+  [msg data & {:as opts}])

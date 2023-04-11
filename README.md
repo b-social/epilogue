@@ -8,25 +8,19 @@ Simple Clojure logging facade for logging structured data via [SLF4J][] 2+.
 ## Rationale
 
 Logs are the epilogue of program execution.  They provide us valuable insights
-into how our programs really behaved.  Unfortunately, the world of Java logging
-is fraught with [complexity and competing solutions][Logging in Clojure].
-While Clojure provides us with an excellent facade for these tools in
-[clojure.tools.logging][] it unfortunately suffers from a critical limitation.
-Logs are strings; no structured data.
+into how our programs really behaved.  While the world of Java logging is
+fraught with [complexity and competing solutions][Logging in Clojure], Clojure
+provides us with an excellent facade for these tools in
+[clojure.tools.logging][].  Unfortunately though, suffers from a critical
+limitation.  Logs are strings; no structured data.
 
-While it would be great to use better, simpler logging solutions like
-[μ/log][mulog].  Many situations still require full integration with the Java
-logging mess.  Is there a half-way point?  Can we add more data to our logs in
-a semi-structured way?
+While it would be great to use simpler logging solutions like [μ/log][mulog].
+Many situations still require full integration with the Java logging mess.  Is
+there a half-way point?
 
 This library is a simple Clojure logging facade that wraps SLF4J 2+ (the
 version that added structured data support) with an interface similar to that
 of `ex-info`.  Epilogue also provides useful additional functionality.
-
-> **Note**<br>
-> If tools.logging ever gets structured data support, a mostly backwards
-> compatible v2 of this library **may** be published that wraps that instead of
-> SLF4J.
 
 [Logging in Clojure]: https://lambdaisland.com/blog/2020-06-12-logging-in-clojure-making-sense-of-the-mess
 [clojure.tools.logging]: https://github.com/clojure/tools.logging
