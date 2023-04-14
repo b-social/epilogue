@@ -18,6 +18,9 @@ While it would be great to use simpler logging solutions like [μ/log][mulog].
 Many situations still require full integration with the Java logging mess.  Is
 there a half-way point?
 
+The recent 2.0.0 release of SLF4J, the de-facto logging facade for Java, added
+support for logging data!
+
 This library is a simple Clojure logging facade that wraps SLF4J 2+ (the
 version that added structured data support) with an interface similar to that
 of `ex-info`.  Epilogue also provides useful additional functionality.
@@ -29,6 +32,9 @@ of `ex-info`.  Epilogue also provides useful additional functionality.
 
 ## Installation
 
+> **Note**<br>
+> Not yet published to Clojars!
+
 ```clojure
 ;; tools.deps
 com.kroo/epilogue {:mvn/version "0.1"}
@@ -36,8 +42,37 @@ com.kroo/epilogue {:mvn/version "0.1"}
 [com.kroo/epilogue "0.1"]
 ```
 
+Before you can use Epilogue, you must first configure all logs to go through SLF4J.
+Then you can configure a logging backend.
+
 
 ## Usage
+
+Once the tricky part of setting up logging is over, Epilogue is super easy to use!
+
+```clojure
+(require '[com.kroo.epilogue :as log])
+
+;; Log at any logging level supported by SLF4J.
+(log/error "This will log at ERROR level." {:some "structured data", :to-add-to "the log"})
+(log/warn "This will log at WARN level." {:some-other "data"})
+(log/info "This will log at INFO level." {:some {:hi [4 5 6]})
+(log/debug "This will log at DEBUG level." {:foo "bar", :biz [1 2 3]})
+(log/trace "This will log at TRACE level." {:foo "bar"})
+
+;; Maybe log with a throwable as the cause.  (Works on all logging levels.)
+(catch Exception ex
+  (log/error "This will log at ERROR level with a \"cause\""
+             {:some "data", :foo "bar"}
+             :throwable ex))
+
+;; You can also use keywords as the log message!
+(log/info ::account-created {:email-address "john.doe@example.com"})
+
+;; Need to override the logger namespace?  No problem!
+(log/info ::different-namespace? {:foo "bar"}
+          :logger-ns "this.is.another-namespace")
+```
 
 [logback]: https://logback.qos.ch
 
