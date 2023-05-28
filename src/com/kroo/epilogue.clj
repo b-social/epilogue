@@ -1,8 +1,8 @@
 (ns com.kroo.epilogue
   "Simple Clojure logging facade for logging structured data via SLF4J 2+."
-  (:import [org.slf4j Logger LoggerFactory]
-           [org.slf4j.event Level]
-           [org.slf4j.spi LoggingEventBuilder NOPLoggingEventBuilder]))
+  (:import (org.slf4j Logger LoggerFactory)
+           (org.slf4j.event Level)
+           (org.slf4j.spi LoggingEventBuilder NOPLoggingEventBuilder)))
 
 (def ^:private levels
   "Map of level names to SLF4J Level objects."
