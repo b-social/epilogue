@@ -91,19 +91,54 @@
            ~throwable
            (assoc ~(meta &form), :file *file*, :namespace ns#))))
 
+(defn- single-arity?
+  "Returns the index of the final body value if it looks like a single arity
+   macro definition, else returns `nil`."
+  [forms]
+  (when-let [[idx] (keep-indexed #(when (vector? %2) %1) forms)]
+    (let [last-form-idx (dec (count forms))]
+      (when (not= idx last-form-idx)
+        last-form-idx))))
+
+(defn- multiple-arity?
+  "Returns the indicies of the body values."
+  [forms]
+  (let [idxs (keep-indexed
+               #(when (and (list? %2)
+                           (vector? (first %2))
+                           (second %2))
+                  [%1 (dec (count %2))])
+               forms)]
+    (when (seq idxs) idxs)))
+
+(defn- persist-form-meta [body]
+  `(with-meta ~body (meta ~'&form)))
+
+(defmacro defloggingmacro
+  "Defines a macro that persists the original line number and column making it
+   suitable for logging.  Otherwise behaves identically to `defmacro`."
+  {:arglists (:arglists (meta #'defmacro))}
+  [& rst]
+  (cons
+    `defmacro
+    (let [rst (vec rst)]
+      (if-let [idx (single-arity? rst)]
+        (update rst idx persist-form-meta)
+        (if-let [idxs (multiple-arity? rst)]
+          (mapv #(update-in rst % persist-form-meta) idxs)
+          rst)))))
+
 (defmacro ^:private deflevel
   "Construct a convenience macro for a specific logging level."
   [level]
-  `(defmacro ~(symbol level)
+  `(defloggingmacro ~(symbol level)
      {:doc (str "Log a message (`msg`) and `data` at the `"
                 ~level
                 "` logging level.\n\n  "
                 "See `com.kroo.epilogue/log` for more details.")
       :arglists '~'([msg data & {:keys [throwable logger-ns]}])}
      [msg# data# & {:as opts#}]
-     (with-meta
-       `(log ~~level ~msg# ~data# opts#)
-       ~'(meta &form))))
+     `(log ~~level ~msg# ~data# opts#)))
 
 ;; Generate convenience macros for the supported logging levels.
 (declare error warn info debug trace)
@@ -114,12 +149,15 @@
 (deflevel :trace)
 
 ;; TODO
-(defmacro spy
-  "Log then return `data`.  Logs at `:debug` level by default."
-  ;; Should `msg` be an opt?
-  [msg data & {:as opts}])
+;; (declare spy)
+;; (defloggingmacro spy
+;;   "Log then return `data`.  Logs at `:debug` level by default."
+;;   ;; Should `msg` be an opt?
+;;   [msg data & {:as opts}])
 
 ;; TODO
-(defmacro raise
-  "Log an error then throw."
-  [msg data & {:as opts}])
+;; (declare raise)
+;; (defloggingmacro raise
+;;   "Log an error then throw."
+;;   [msg data & {:as opts}]
+;;   `(error ~msg ~data))
