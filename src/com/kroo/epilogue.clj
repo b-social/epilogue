@@ -92,16 +92,17 @@
            (assoc ~(meta &form), :file *file*, :namespace ns#))))
 
 (defn- single-arity?
-  "Returns the index of the final body value if it looks like a single arity
+  "Returns the index of the final body value if it looks like a single-arity
    macro definition, else returns `nil`."
   [forms]
-  (when-let [[idx] (keep-indexed #(when (vector? %2) %1) forms)]
-    (let [last-form-idx (dec (count forms))]
-      (when (not= idx last-form-idx)
-        last-form-idx))))
+  (let [last-form-idx (dec (count forms))
+        [idx]         (keep-indexed #(when (vector? %2) %1) forms)]
+    (when (and idx (not= idx last-form-idx))
+      last-form-idx)))
 
-(defn- multiple-arity?
-  "Returns the indicies of the body values."
+(defn- multi-arity?
+  "Returns a list of index paths to the final body values in a multi-arity
+   macro definition, else returns `nil`."
   [forms]
   (let [idxs (keep-indexed
                #(when (and (list? %2)
@@ -124,8 +125,15 @@
     (let [rst (vec rst)]
       (if-let [idx (single-arity? rst)]
         (update rst idx persist-form-meta)
-        (if-let [idxs (multiple-arity? rst)]
-          (mapv #(update-in rst % persist-form-meta) idxs)
+        (if-let [idxs (multi-arity? rst)]
+          (reduce
+            (fn [acc idx-path]
+              (-> acc
+                  (update (first idx-path) vec)
+                  (update-in idx-path persist-form-meta)
+                  (update (first idx-path) (partial apply list))))
+            rst
+            idxs)
           rst)))))
 
 (defmacro ^:private deflevel
