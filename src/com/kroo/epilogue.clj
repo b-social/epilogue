@@ -1,6 +1,6 @@
 (ns com.kroo.epilogue
   "Simple Clojure logging facade for logging structured data via SLF4J 2+."
-  (:import (org.slf4j Logger LoggerFactory)
+  (:import (org.slf4j Logger LoggerFactory Marker MarkerFactory)
            (org.slf4j.event Level)
            (org.slf4j.spi LoggingEventBuilder NOPLoggingEventBuilder)))
 
@@ -53,12 +53,22 @@
   ^LoggingEventBuilder [^LoggingEventBuilder builder k ^Object v]
   (.addKeyValue builder (->str k) v))
 
+(defn- add-marker
+  "Add a marker to an SLF4J log event.  If `marker` is a string or keyword, it
+   will build a marker."
+  ^LoggingEventBuilder [^LoggingEventBuilder builder marker]
+  (.addMarker
+   builder
+   ^Marker (if (instance? Marker marker)
+             marker
+             (MarkerFactory/getMarker (->str marker)))))
+
 (defn log*
   "Primitive logging function for Epilogue.
 
    Do not use this function directly!  Use the provided macros instead.
    Backwards compatibility is not guaranteed for this function."
-  [^Logger logger level msg data ^Throwable throwable src]
+  [^Logger logger level msg data ^Throwable throwable markers src]
   (let [^LoggingEventBuilder builder (.atLevel logger (levels level))]
     ;; Check the logging level is enabled and continue if so.
     (when-not (identical? builder nop)
@@ -67,6 +77,7 @@
         (add-kv $ ::source src)
         (reduce-kv add-kv $ @*context*)
         (reduce-kv add-kv $ data)
+        (reduce add-marker $ markers)
         (cond-> $
           throwable (as-> $$ (.setCause ^LoggingEventBuilder $$ throwable)))
         (.log ^LoggingEventBuilder $)))))
@@ -81,7 +92,7 @@
    Options:
      - a `throwable` object to set as the \"cause\", and
      - an override logger namespace (`logger-ns`)."
-  [level msg data & {:keys [throwable logger-ns]}]
+  [level msg data & {:keys [throwable logger-ns markers]}]
   `(let [ns#  (str *ns*)
          lns# (if-let [l# ~logger-ns] (str l#) ns#)]
      (log* (LoggerFactory/getLogger ^String lns#)
@@ -89,6 +100,7 @@
            ~msg
            ~data
            ~throwable
+           ~markers
            (assoc ~(meta &form), :file *file*, :namespace ns#))))
 
 (defn- single-arity?
@@ -144,9 +156,9 @@
                 ~level
                 "` logging level.\n\n  "
                 "See `com.kroo.epilogue/log` for more details.")
-      :arglists '~'([msg data & {:keys [throwable logger-ns]}])}
-     [msg# data# & {:as opts#}]
-     `(log ~~level ~msg# ~data# opts#)))
+      :arglists '~'([msg data & {:keys [throwable logger-ns markers]}])}
+     [msg# data# & opts#]
+     `(log ~~level ~msg# ~data# ~@opts#)))
 
 ;; Generate convenience macros for the supported logging levels.
 (declare error warn info debug trace)
