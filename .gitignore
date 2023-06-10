@@ -6,6 +6,9 @@ target/
 .clj-kondo/
 !.clj-kondo/config.edn
 
+# macOS
+.DS_Store
+
 # IntelliJ
 .idea/
 *.iml
@@ -15,5 +18,9 @@ target/
 .calva/
 .vscode/
 
-# macOS
-.DS_Store
+# Vim & Emacs
+*~
+\#*\#
+*.swp
+*.swo
+*.swn
