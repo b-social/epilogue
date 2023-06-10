@@ -1,2 +1,10 @@
 (defproject com.example/logging "1.0"
-            )
+  :dependencies [[org.clojure/clojure            "1.11.1"]
+                 [com.kroo/epilogue              "0.1"]
+                 ;; Use Logback-classic as the logging backend.
+                 [ch.qos.logback/logback-classic "1.4.7"]
+                 [com.kroo/typeset.logback       "0.1"]
+                 ;; Add SLF4J logging bridges to make logs from other logging libraries go via SLF4J.
+                 [org.slf4j/jul-to-slf4j         "2.0.7"]
+                 [org.slf4j/jcl-over-slf4j       "2.0.7"]
+                 [org.slf4j/log4j-over-slf4j     "2.0.7"]])

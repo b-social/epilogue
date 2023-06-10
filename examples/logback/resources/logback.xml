@@ -1,0 +1,18 @@
+<configuration scan="true" scanPeriod="5 seconds">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- We are using Typeset.logback as the log formatter for Logback
+                 as it provides excellent Clojure support.
+                 https://github.com/b-social/typeset.logback -->
+            <layout class="com.kroo.typeset.logback.JsonLayout">
+                <prettyPrint>true</prettyPrint>
+            </layout>
+        </encoder>
+    </appender>
+
+    <logger name="TEMP" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

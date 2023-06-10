@@ -6,4 +6,4 @@
 (SLF4JBridgeHandler/removeHandlersForRootLogger)
 (SLF4JBridgeHandler/install)
 
-(log/info "Log!" {})
+(log/info "Log!" {:foo "bar"})
