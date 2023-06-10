@@ -10,4 +10,10 @@
                 *assert*             false}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]
                  [org.slf4j/slf4j-api "2.0.7"]]
-  :profiles {:dev {:dependencies [[org.slf4j/slf4j-simple "2.0.7"]]}})
+  :plugins [[com.github.clj-kondo/lein-clj-kondo "RELEASE"]
+            [com.github.liquidz/antq "RELEASE"]
+            [dev.weavejester/lein-cljfmt "RELEASE"]]
+  :profiles {:dev {:dependencies [[org.slf4j/slf4j-simple "2.0.7"]]}}
+  :aliases {"lint" ["clj-kondo" "--lint" "src"]
+            "fmt"  ["cljfmt" "fix"]
+            "antq" ["with-profile" "+dev" "antq"]})

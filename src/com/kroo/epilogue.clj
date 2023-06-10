@@ -74,7 +74,7 @@
     (when-not (identical? builder nop)
       (as-> builder $
         (.setMessage $ (->str msg))
-        (add-kv $ ::source src)
+        (add-kv $ :source src)
         (reduce-kv add-kv $ @*context*)
         (reduce-kv add-kv $ data)
         (reduce add-marker $ markers)
@@ -124,11 +124,11 @@
                forms)]
     (when (seq idxs) idxs)))
 
-(defn- persist-form-meta [body]
+(defn- preserve-form-meta [body]
   `(with-meta ~body (meta ~'&form)))
 
 (defmacro defloggingmacro
-  "Defines a macro that persists the original line number and column making it
+  "Defines a macro that preserves the original line number and column making it
    suitable for logging.  Otherwise behaves identically to `defmacro`."
   {:arglists (:arglists (meta #'defmacro))}
   [& rst]
@@ -136,13 +136,13 @@
     `defmacro
     (let [rst (vec rst)]
       (if-let [idx (single-arity? rst)]
-        (update rst idx persist-form-meta)
+        (update rst idx preserve-form-meta)
         (if-let [idxs (multi-arity? rst)]
           (reduce
             (fn [acc idx-path]
               (-> acc
                   (update (first idx-path) vec)
-                  (update-in idx-path persist-form-meta)
+                  (update-in idx-path preserve-form-meta)
                   (update (first idx-path) (partial apply list))))
             rst
             idxs)
