@@ -117,11 +117,11 @@
    macro definition, else returns `nil`."
   [forms]
   (let [idxs (keep-indexed
-               #(when (and (list? %2)
-                           (vector? (first %2))
-                           (second %2))
-                  [%1 (dec (count %2))])
-               forms)]
+              #(when (and (list? %2)
+                          (vector? (first %2))
+                          (second %2))
+                 [%1 (dec (count %2))])
+              forms)]
     (when (seq idxs) idxs)))
 
 (defn- preserve-form-meta [body]
@@ -133,20 +133,20 @@
   {:arglists (:arglists (meta #'defmacro))}
   [& rst]
   (cons
-    `defmacro
-    (let [rst (vec rst)]
-      (if-let [idx (single-arity? rst)]
-        (update rst idx preserve-form-meta)
-        (if-let [idxs (multi-arity? rst)]
-          (reduce
-            (fn [acc idx-path]
-              (-> acc
-                  (update (first idx-path) vec)
-                  (update-in idx-path preserve-form-meta)
-                  (update (first idx-path) (partial apply list))))
-            rst
-            idxs)
-          rst)))))
+   `defmacro
+   (let [rst (vec rst)]
+     (if-let [idx (single-arity? rst)]
+       (update rst idx preserve-form-meta)
+       (if-let [idxs (multi-arity? rst)]
+         (reduce
+          (fn [acc idx-path]
+            (-> acc
+                (update (first idx-path) vec)
+                (update-in idx-path preserve-form-meta)
+                (update (first idx-path) (partial apply list))))
+          rst
+          idxs)
+         rst)))))
 
 (defmacro ^:private deflevel
   "Construct a convenience macro for a specific logging level."
@@ -167,17 +167,3 @@
 (deflevel :info)
 (deflevel :debug)
 (deflevel :trace)
-
-;; TODO
-;; (declare spy)
-;; (defloggingmacro spy
-;;   "Log then return `data`.  Logs at `:debug` level by default."
-;;   ;; Should `msg` be an opt?
-;;   [msg data & {:as opts}])
-
-;; TODO
-;; (declare raise)
-;; (defloggingmacro raise
-;;   "Log an error then throw."
-;;   [msg data & {:as opts}]
-;;   `(error ~msg ~data))
