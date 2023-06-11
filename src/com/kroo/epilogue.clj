@@ -68,8 +68,10 @@
 
    Do not use this function directly!  Use the provided macros instead.
    Backwards compatibility is not guaranteed for this function."
-  [^Logger logger level msg data ^Throwable throwable markers src]
-  (let [^LoggingEventBuilder builder (.atLevel logger (levels level))]
+  [level msg data ^Throwable throwable markers logger-ns src]
+  (let [^String logger-ns (if logger-ns (str logger-ns) (:namespace src))
+        ^Logger logger    (LoggerFactory/getLogger logger-ns)
+        ^LoggingEventBuilder builder (.atLevel logger (levels level))]
     ;; Check the logging level is enabled and continue if so.
     (when-not (identical? builder nop)
       (as-> builder $
@@ -90,18 +92,14 @@
    protocol, but it is recommended to log only maps to avoid confusion.
 
    Options:
-     - a `throwable` object to set as the \"cause\", and
+     - a `throwable` object to set as the \"cause\",
+     - a sequence of SLF4J `markers` (or strings/keywords), and
      - an override logger namespace (`logger-ns`)."
   [level msg data & {:keys [throwable logger-ns markers]}]
-  `(let [ns#  (str *ns*)
-         lns# (if-let [l# ~logger-ns] (str l#) ns#)]
-     (log* (LoggerFactory/getLogger ^String lns#)
-           ~level
-           ~msg
-           ~data
-           ~throwable
-           ~markers
-           (assoc ~(meta &form), :file *file*, :namespace ns#))))
+  (let [src (-> (meta &form)
+                (update :file #(or % (str *file*)))
+                (update :namespace #(or % (str *ns*))))]
+    `(log* ~level ~msg ~data ~throwable ~markers ~logger-ns ~src)))
 
 (defn- single-arity?
   "Returns the index of the final body value if it looks like a single-arity
@@ -125,7 +123,8 @@
     (when (seq idxs) idxs)))
 
 (defn- preserve-form-meta [body]
-  `(with-meta ~body (meta ~'&form)))
+  `(with-meta ~body
+     (assoc (meta ~'&form) :file (str *file*), :namespace (str *ns*))))
 
 (defmacro defloggingmacro
   "Defines a macro that preserves the original line number and column making it
