@@ -23,9 +23,6 @@ This library is a simple Clojure logging facade that wraps SLF4J 2+ (the version
 
 ## Installation
 
-> **Note**<br>
-> Not yet published to Clojars!
-
 ```clojure
 ;; tools.deps
 com.kroo/epilogue {:mvn/version "0.1"}

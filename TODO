@@ -1,0 +1,11 @@
+- Documentation
+  - log
+  - \*context\*
+  - with-context
+  - defloggingmacro
+- Implement extra helper macros.
+  - assert
+  - raise
+  - spy
+- Tests?
+- Switch to `tools.deps` and `tools.build`?
