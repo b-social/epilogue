@@ -23,6 +23,8 @@ This library is a simple Clojure logging facade that wraps SLF4J 2+ (the version
 
 ## Installation
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.kroo/epilogue.svg)](https://clojars.org/com.kroo/epilogue)
+
 ```clojure
 ;; tools.deps
 com.kroo/epilogue {:mvn/version "0.1"}
