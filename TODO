@@ -1,8 +1,6 @@
 - Documentation
-  - log
   - \*context\*
   - with-context
-  - defloggingmacro
 - Implement extra helper macros.
   - assert
   - raise

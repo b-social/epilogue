@@ -41,7 +41,14 @@ Once the tricky part of setting up logging is over, Epilogue is super easy to us
 
 ```clojure
 (require '[com.kroo.epilogue :as log])
+```
 
+
+### Basics
+
+The core of any logging tool is being able to make logs:
+
+```clojure
 ;; Log at any logging level supported by SLF4J.
 (log/error "This will log at ERROR level." {:some "structured data", :to-add-to "the log"})
 (log/warn "This will log at WARN level." {:some-other "data"})
@@ -49,7 +56,7 @@ Once the tricky part of setting up logging is over, Epilogue is super easy to us
 (log/debug "This will log at DEBUG level." {:foo "bar", :biz [1 2 3]})
 (log/trace "This will log at TRACE level." {:foo "bar"})
 
-;; Maybe log with a throwable as the cause.  (Works on all logging levels.)
+;; Optionally log with a throwable as the cause.  (Works on all logging levels.)
 (try
   (throw (ex-info "Something broke" {:hello "world"}))
   (catch Exception ex
@@ -57,17 +64,49 @@ Once the tricky part of setting up logging is over, Epilogue is super easy to us
                {:some "data", :foo "bar"}
                :throwable ex)))
 
-;; You can also use keywords as the log message!
+;; You can even use keywords as the log message!
 (log/info ::account-created {:email-address "john.doe@example.com"})
 
-;; Need to override the logger namespace?  No problem!
+;; Tag logs with SLF4J markers!  (Can be an `org.slf4j.Marker` instance, a string or a keyword.)
+(log/error "Something has gone really wrong!" {:id 123}
+           :markers [:alert/critical])
+
+;; Want to override the logger namespace?  No problem!
 (log/info ::different-namespace? {:foo "bar"}
           :logger-ns "this.is.another-namespace")
 
-;; You can pass SLF4J "markers" to logs.  Either pass an `org.slf4j.Marker`
-;; instance, a string or a keyword.
-(log/error "Something has gone really wrong!" {:id 123}
-           :markers [:alert/critical])
+;; Programatically log at different levels with `log`.
+(log/log :warn "Warning about something" {:what? "something..."})
+```
+
+
+### The logging context
+
+```clojure
+;; TODO: write this section
+log/*context*
+log/with-context
+```
+
+
+### Some useful tools
+
+```clojure
+(require '[com.kroo.epilogue :as log :refer [defloggingmacro]])
+
+;; Create your own logging macros with `defloggingmacro`.  It automatically
+;; preserves the correct source file, line and column numbers.  Use it exactly
+;; as you would `defmacro`.
+(defloggingmacro my-info
+  "Custom version of `log/info` that has the \"data\" and \"message\" params
+   the other way around, and expects \"opts\" to be passed as a map instead of
+   keyword parameters."
+  ([data message]
+   `(my-info ~data ~message {}))
+  ([data message opts]
+   `(log/log :info ~message ~data ~@opts)))
+
+;; More logging utilities to be added...
 ```
 
 
