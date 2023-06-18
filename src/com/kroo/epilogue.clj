@@ -1,5 +1,6 @@
 (ns com.kroo.epilogue
   "Simple Clojure logging facade for logging structured data via SLF4J 2+."
+  (:refer-clojure :exclude [assert])
   (:import (org.slf4j Logger LoggerFactory Marker MarkerFactory)
            (org.slf4j.event Level)
            (org.slf4j.spi LoggingEventBuilder NOPLoggingEventBuilder)))
@@ -166,3 +167,50 @@
 (deflevel :info)
 (deflevel :debug)
 (deflevel :trace)
+
+(comment
+  ;; TODO
+  (declare spy)
+  (defloggingmacro spy
+    "Log then return `data`.  Logs at `:debug` level by default."
+    ;; Should `msg` be an opt?
+    [msg data & {:as opts}])
+
+  ;; TODO
+  (declare raise)
+  (defloggingmacro raise
+    "Log an error then throw."
+    [msg data & {:as opts}]
+    `(let []
+       (error ~msg ~data :throwable ...)
+       (throw ...)))
+
+  ;; Little assertion DSL.
+  (-> foo
+      (assert (= % 12)))
+  (assert 12 pos?)
+  (assert {:foo 1} :foo)
+  (assert :hi #{:hi})
+  (assert 12 (fn [x] (> x 1)))
+  (assert 12 #(> % 1))
+  )
+
+(declare assert)
+(defloggingmacro assert
+  ""
+  [value test & {:as opts}]
+  `(let [val# ~value
+         res# ~(if (and (list? test) (not= `fn (first test)))
+                 `(as-> val# ~'% ~test)
+                 `(test ~val#))]
+     (if res#
+       val#
+       (let [test-code# (pr-str '~test)
+             message#   (str "Assert failed: " test-code# " where \"%\" was " (pr-str val#))
+             throwable# (AssertionError. message#)]
+         (log (or (:level ~opts) :debug)
+              message#
+              {:test  test-code#
+               :value val#}
+              :throwable throwable#)
+         (throw throwable#)))))
