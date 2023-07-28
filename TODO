@@ -1,7 +1,3 @@
-- Implement extra helper macros.
-  - assert
-  - raise
-  - spy
-- Tests?
-- Switch to `tools.deps` and `tools.build`?
 - Rename `:markers` to `:tags`?
+- Implement extra helper macros: assert, raise, spy
+- Tests?

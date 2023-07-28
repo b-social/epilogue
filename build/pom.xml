@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>epilogue</name>
+  <description>Simple Clojure logging facade for logging structured data via SLF4J 2+.</description>
+  <url>https://github.com/b-social/epilogue</url>
+  <licenses>
+    <license>
+      <name>MIT</name>
+      <url>https://github.com/b-social/epilogue/blob/master/LICENCE</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Kroo Bank</name>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/b-social/epilogue</url>
+    <connection>scm:git:git://github.com/b-social/epilogue.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/b-social/epilogue.git</developerConnection>
+  </scm>
+</project>
