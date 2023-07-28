@@ -13,7 +13,7 @@
   :lint {:replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "clj-kondo.main" "--parallel" "--lint" "src"]}
   ;; clj -T:cljfmt fix
-  :cljfmt {:deps {io.github.weavejester/cljfmt {:git/tag "0.10.6", :git/sha "4d32002"}}
+  :cljfmt {:deps {io.github.weavejester/cljfmt {:git/tag "0.11.1", :git/sha "0882f99"}}
            :ns-default cljfmt.tool}
   ;; clj -T:antq outdated
   :antq {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
