@@ -27,9 +27,9 @@ This library is a simple Clojure logging facade that wraps SLF4J 2+ (the version
 
 ```clojure
 ;; tools.deps
-com.kroo/epilogue {:mvn/version "0.1"}
+com.kroo/epilogue {:mvn/version "0.2"}
 ;; Leiningen
-[com.kroo/epilogue "0.1"]
+[com.kroo/epilogue "0.2"]
 ```
 
 Before you can use Epilogue, you will probably want to first configure all logs to go through SLF4J and then configure a logging backend.  You can find an example Clojure project using Epilogue with [Logback][] in the "[examples](/examples/logback)" folder of this repository, which demonstrates how to set it up.
@@ -96,7 +96,7 @@ log/*context*
 @log/*context*
 
 ;; Add global entries to the logging context.
-(swap! log/*context* assoc :version "0.1")
+(swap! log/*context* assoc :version "126bf8f7640989f39c3077933ae4e1c47e0a04eef")
 
 ;; Add entries within a dynamic scope.
 (log/with-context {:correlation-id (random-uuid)}
@@ -111,12 +111,24 @@ log/*context*
 ```clojure
 (require '[com.kroo.epilogue :as log :refer [defloggingmacro]])
 
+;; ---
+
 ;; Log and throw an exception.  (Logs at `:error` level by default.)
+
 (log/raise "Something went wrong!" {:hello "world"})
+
+(catch Throwable e
+  (log/raise "Something went wrong!" {:hello "world"}
+             :cause e))
+
+(log/raise "Help!" {:foo 123} :level :warn)
+
+;; ---
 
 ;; Create your own logging macros with `defloggingmacro`.  It automatically
 ;; preserves the correct source file, line and column numbers.  Use it exactly
 ;; as you would `defmacro`.
+
 (defloggingmacro my-info
   "Custom version of `log/info` that has the \"data\" and \"message\" params
    the other way around, and expects \"opts\" to be passed as a map instead of
