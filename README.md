@@ -64,7 +64,7 @@ The core of any logging tool is being able to make logs:
   (catch Exception ex
     (log/error "This will log at ERROR level with a \"cause\""
                {:some "data", :foo "bar"}
-               :throwable ex)))
+               :cause ex)))
 
 ;; You can even use keywords as the log message!
 (log/info ::account-created {:email-address "john.doe@example.com"})
@@ -110,6 +110,9 @@ log/*context*
 
 ```clojure
 (require '[com.kroo.epilogue :as log :refer [defloggingmacro]])
+
+;; Log and throw an exception.  (Logs at `:error` level by default.)
+(log/raise "Something went wrong!" {:hello "world"})
 
 ;; Create your own logging macros with `defloggingmacro`.  It automatically
 ;; preserves the correct source file, line and column numbers.  Use it exactly

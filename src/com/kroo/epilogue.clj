@@ -70,7 +70,7 @@
 
    Do not use this function directly!  Use the provided macros instead.
    Backwards compatibility is not guaranteed for this function."
-  [level msg data ^Throwable throwable markers logger-ns src]
+  [level msg data ^Throwable cause markers logger-ns src]
   (let [^String logger-ns (if logger-ns (str logger-ns) (:namespace src))
         ^Logger logger    (LoggerFactory/getLogger logger-ns)
         ^LoggingEventBuilder builder (.atLevel logger (levels level))]
@@ -83,7 +83,7 @@
         (reduce-kv add-kv $ data)
         (reduce add-marker $ markers)
         (cond-> $
-          throwable (as-> $$ (.setCause ^LoggingEventBuilder $$ throwable)))
+          cause (as-> $$ (.setCause ^LoggingEventBuilder $$ cause)))
         (.log ^LoggingEventBuilder $)))))
 
 (defmacro log
@@ -94,14 +94,14 @@
    protocol, but it is recommended to log only maps to avoid confusion.
 
    Options:
-     - a `throwable` object to set as the \"cause\",
+     - a throwable object as the `cause`,
      - a sequence of SLF4J `markers` (or strings/keywords), and
      - an override logger namespace (`logger-ns`)."
-  [level msg data & {:keys [throwable markers logger-ns]}]
+  [level msg data & {:keys [cause markers logger-ns]}]
   (let [src (-> (meta &form)
                 (update :file #(or % (str *file*)))
                 (update :namespace #(or % (str *ns*))))]
-    `(log* ~level ~msg ~data ~throwable ~markers ~logger-ns ~src)))
+    `(log* ~level ~msg ~data ~cause ~markers ~logger-ns ~src)))
 
 (defn- single-arity?
   "Returns the index of the final body value if it looks like a single-arity
@@ -157,7 +157,7 @@
                 ~level
                 "` logging level.\n\n  "
                 "See `com.kroo.epilogue/log` for more details.")
-      :arglists '~'([msg data & {:keys [throwable markers logger-ns]}])}
+      :arglists '~'([msg data & {:keys [cause markers logger-ns]}])}
      [msg# data# & opts#]
      `(log ~~level ~msg# ~data# ~@opts#)))
 
@@ -172,10 +172,10 @@
 (declare raise)
 (defloggingmacro raise
   "Log and throw.  Logs at `:error` level by default."
-  {:arglists '([msg data & {:keys [level throwable markers logger-ns]}])}
+  {:arglists '([msg data & {:keys [level cause markers logger-ns]}])}
   [msg data & {:as opts}]
   `(let [msg#  ~msg
          data# ~data
          opts# ~opts]
      (log (get level? (:level opts#) :error) msg# data# opts#)
-     (throw (ex-info msg# data# (:throwable opts#)))))
+     (throw (ex-info msg# data# (:cause opts#)))))
