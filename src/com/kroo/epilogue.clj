@@ -12,7 +12,9 @@
    :debug Level/DEBUG
    :trace Level/TRACE})
 
-(def ^:private level? (set (keys levels)))
+(def level?
+  "Hashset of accepted levels."
+  (set (keys levels)))
 
 (def ^:dynamic *context*
   "Logging context.  A structured alternative to the [MDC][] that is thread safe
