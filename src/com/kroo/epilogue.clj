@@ -18,31 +18,31 @@
 
 (def ^:dynamic *context*
   "Logging context.  A structured alternative to the [MDC][] that is thread safe
-   and nicer to use from Clojure.  (You can still use the MDC if you like.)
+  and nicer to use from Clojure.  (You can still use the MDC if you like.)
 
-   [MDC]: https://logback.qos.ch/manual/mdc.html
+  [MDC]: https://logback.qos.ch/manual/mdc.html
 
-   Everything in here in scope of the log statement will be included in the log.
-   Try to use fully qualified keywords to avoid naming conflicts with the core
-   log data.
+  Everything in here in scope of the log statement will be included in the log.
+  Try to use fully qualified keywords to avoid naming conflicts with the core
+  log data.
 
-   ---
+  ---
 
-   Why an atom AND a dynamic var?  The dynamic var allows this value to
-   differentiate between threads and dynamic scope, while the atom provides safe
-   alteration and the ability to set global context values."
+  Why an atom AND a dynamic var?  The dynamic var allows this value to
+  differentiate between threads and dynamic scope, while the atom provides safe
+  alteration and the ability to set global context values."
   (atom {}))
 
 (defmacro with-context
   "Merge `context` onto the current logging `*context*`, creating a new scope
-   around `body`."
+  around `body`."
   [context & body]
   `(binding [*context* (atom (merge @*context* ~context))]
      ~@body))
 
 (def ^:private nop
   "The singleton NOPLoggingEventBuilder, used for checking if logging is enabled
-   at a particular level."
+  at a particular level."
   ^LoggingEventBuilder (NOPLoggingEventBuilder/singleton))
 
 (defn- ->str
@@ -59,7 +59,7 @@
 
 (defn- add-marker
   "Add a marker to an SLF4J log event.  If `marker` is a string or keyword, it
-   will build a marker."
+  will build a marker."
   ^LoggingEventBuilder [^LoggingEventBuilder builder marker]
   (.addMarker
    builder
@@ -70,8 +70,8 @@
 (defn log*
   "Primitive logging function for Epilogue.
 
-   Do not use this function directly!  Use the provided macros instead.
-   Backwards compatibility is not guaranteed for this function."
+  Do not use this function directly!  Use the provided macros instead.
+  Backwards compatibility is not guaranteed for this function."
   [level msg data ^Throwable cause markers logger-ns src]
   (let [^String logger-ns (if logger-ns (str logger-ns) (:namespace src))
         ^Logger logger    (LoggerFactory/getLogger logger-ns)
@@ -90,15 +90,15 @@
 
 (defmacro log
   "Logs a message (`msg`) and `data` at the specified logging `level`.  The log
-   will also include anything in `*context*` within the current dynamic scope.
+  will also include anything in `*context*` within the current dynamic scope.
 
-   `data` can be anything that implements the `clojure.core.protocols/IKVReduce`
-   protocol, but it is recommended to log only maps to avoid confusion.
+  `data` can be anything that implements the `clojure.core.protocols/IKVReduce`
+  protocol, but it is recommended to log only maps to avoid confusion.
 
-   Options:
-     - a throwable object as the `cause`,
-     - a sequence of SLF4J `markers` (or strings/keywords), and
-     - an override logger namespace (`logger-ns`)."
+  Options:
+    - a throwable object as the `cause`,
+    - a sequence of SLF4J `markers` (or strings/keywords), and
+    - an override logger namespace (`logger-ns`)."
   [level msg data & {:keys [cause markers logger-ns]}]
   (let [src (-> (meta &form)
                 (update :file #(or % (str *file*)))
@@ -107,7 +107,7 @@
 
 (defn- single-arity?
   "Returns the index of the final body value if it looks like a single-arity
-   macro definition, else returns `nil`."
+  macro definition, else returns `nil`."
   [forms]
   (let [last-form-idx (dec (count forms))
         [idx]         (keep-indexed #(when (vector? %2) %1) forms)]
@@ -116,7 +116,7 @@
 
 (defn- multi-arity?
   "Returns a list of index paths to the final body values in a multi-arity
-   macro definition, else returns `nil`."
+  macro definition, else returns `nil`."
   [forms]
   (let [idxs (keep-indexed
               #(when (and (list? %2)
@@ -132,7 +132,7 @@
 
 (defmacro defloggingmacro
   "Defines a macro that preserves the original line number and column making it
-   suitable for logging.  Otherwise behaves identically to `defmacro`."
+  suitable for logging.  Otherwise behaves identically to `defmacro`."
   {:arglists (:arglists (meta #'defmacro))}
   [& rst]
   (cons
@@ -174,7 +174,7 @@
 (declare raise)
 (defloggingmacro raise
   "Log and throw.  Logs at `:error` level by default.  Constructs and throws a
-   `clojure.lang.ExceptionInfo` object."
+  `clojure.lang.ExceptionInfo` object."
   {:arglists '([msg data & {:keys [level cause markers logger-ns]}])}
   [msg data & {:as opts}]
   `(let [msg#  ~msg
