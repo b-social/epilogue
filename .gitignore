@@ -2,8 +2,6 @@
 target/
 .cpcache/
 .nrepl-port
-.lein-repl-history
-.lein-failures
 .clj-kondo/*
 !.clj-kondo/config.edn
 
