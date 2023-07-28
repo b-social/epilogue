@@ -76,12 +76,7 @@
     (when-not (identical? builder nop)
       (as-> builder $
         (.setMessage $ (->str msg))
-        ;; Attach source info to the log event.  Resembles Datadog "source" naming.
-        (add-kv $ "logger.namespace" (:namespace src))
-        (add-kv $ "logger.file" (:file src))
-        (add-kv $ "logger.line" (:line src))
-        (add-kv $ "logger.column" (:column src))
-        ;; Attach other data.
+        (add-kv $ "logger.source" src)
         (reduce-kv add-kv $ @*context*)
         (reduce-kv add-kv $ data)
         (reduce add-marker $ markers)

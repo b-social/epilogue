@@ -1,3 +1,2 @@
-- Rename `:markers` to `:tags`?
 - Implement extra helper macros: assert, raise, spy
 - Tests?
