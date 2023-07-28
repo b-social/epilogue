@@ -12,6 +12,8 @@
    :debug Level/DEBUG
    :trace Level/TRACE})
 
+(def ^:private level? (set (keys levels)))
+
 (def ^:dynamic *context*
   "Logging context.  A structured alternative to the [MDC][] that is thread safe
    and nicer to use from Clojure.  (You can still use the MDC if you like.)
@@ -95,7 +97,7 @@
      - a `throwable` object to set as the \"cause\",
      - a sequence of SLF4J `markers` (or strings/keywords), and
      - an override logger namespace (`logger-ns`)."
-  [level msg data & {:keys [throwable logger-ns markers]}]
+  [level msg data & {:keys [throwable markers logger-ns]}]
   (let [src (-> (meta &form)
                 (update :file #(or % (str *file*)))
                 (update :namespace #(or % (str *ns*))))]
@@ -155,7 +157,7 @@
                 ~level
                 "` logging level.\n\n  "
                 "See `com.kroo.epilogue/log` for more details.")
-      :arglists '~'([msg data & {:keys [throwable logger-ns markers]}])}
+      :arglists '~'([msg data & {:keys [throwable markers logger-ns]}])}
      [msg# data# & opts#]
      `(log ~~level ~msg# ~data# ~@opts#)))
 
@@ -166,3 +168,14 @@
 (deflevel :info)
 (deflevel :debug)
 (deflevel :trace)
+
+(declare raise)
+(defloggingmacro raise
+  "Log and throw.  Logs at `:error` level by default."
+  {:arglists '([msg data & {:keys [level throwable markers logger-ns]}])}
+  [msg data & {:as opts}]
+  `(let [msg#  ~msg
+         data# ~data
+         opts# ~opts]
+     (log (get level? (:level opts#) :error) msg# data# opts#)
+     (throw (ex-info msg# data# (:throwable opts#)))))
