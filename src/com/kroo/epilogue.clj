@@ -173,7 +173,8 @@
 
 (declare raise)
 (defloggingmacro raise
-  "Log and throw.  Logs at `:error` level by default."
+  "Log and throw.  Logs at `:error` level by default.  Constructs and throws a
+   `clojure.lang.ExceptionInfo` object."
   {:arglists '([msg data & {:keys [level cause markers logger-ns]}])}
   [msg data & {:as opts}]
   `(let [msg#  ~msg
