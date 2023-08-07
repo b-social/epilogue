@@ -89,8 +89,10 @@
         (.log ^LoggingEventBuilder $)))))
 
 (defmacro log
-  "Logs a message (`msg`) and `data` at the specified logging `level`.  The log
-  will also include anything in `*context*` within the current dynamic scope.
+  "Logs a message and accompanying data at the specified logging level.
+
+  The log will include anything in `com.kroo.epilogue/*context*` within the
+  current dynamic scope.
 
   `data` can be anything that implements the `clojure.core.protocols/IKVReduce`
   protocol, but it is recommended to log only maps to avoid confusion.
@@ -154,22 +156,30 @@
 (defmacro ^:private deflevel
   "Construct a convenience macro for a specific logging level."
   [level]
-  `(defloggingmacro ~(symbol level)
-     {:doc (str "Log a message (`msg`) and `data` at the `"
-                ~level
-                "` logging level.\n\n  "
-                "See `com.kroo.epilogue/log` for more details.")
+  `(defloggingmacro ~level
+     {:doc (str "Log a message and accompanying data at the `" ~(keyword level) "` logging level.\n"
+                "\n"
+                "  The log will include anything in `com.kroo.epilogue/*context*` within the\n"
+                "  current dynamic scope.\n"
+                "\n"
+                "  `data` can be anything that implements the `clojure.core.protocols/IKVReduce`\n"
+                "  protocol, but it is recommended to log only maps to avoid confusion.\n"
+                "\n"
+                "  Options:\n"
+                "    - a throwable object as the `cause`,\n"
+                "    - a sequence of SLF4J `markers` (or strings/keywords), and\n"
+                "    - an override logger namespace (`logger-ns`).")
       :arglists '~'([msg data & {:keys [cause markers logger-ns]}])}
      [msg# data# & opts#]
-     `(log ~~level ~msg# ~data# ~@opts#)))
+     `(log ~~(keyword level) ~msg# ~data# ~@opts#)))
 
 ;; Generate convenience macros for the supported logging levels.
 (declare error warn info debug trace)
-(deflevel :error)
-(deflevel :warn)
-(deflevel :info)
-(deflevel :debug)
-(deflevel :trace)
+(deflevel error)
+(deflevel warn)
+(deflevel info)
+(deflevel debug)
+(deflevel trace)
 
 (declare raise)
 (defloggingmacro raise
