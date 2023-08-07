@@ -34,15 +34,16 @@
   "Build the JAR."
   [_opts]
   (clean nil)
-  (b/copy-dir {:src-dirs ["src"]
+  (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (compile nil)
-  (b/write-pom {:class-dir class-dir
-                :lib       lib
-                :version   version
-                :basis     basis
-                :src-dirs  ["src"]
-                :src-pom "build/pom.xml"})
+  (b/write-pom {:class-dir     class-dir
+                :lib           lib
+                :version       version
+                :basis         basis
+                :resource-dirs ["resources"]
+                :src-dirs      ["src"]
+                :src-pom       "build/pom.xml"})
   (b/jar {:class-dir class-dir
           :jar-file  jar-file}))
 
