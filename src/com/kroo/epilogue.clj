@@ -17,28 +17,27 @@
   (set (keys levels)))
 
 (def ^:dynamic *context*
-  "Logging context.  A structured alternative to the [MDC][] that is thread safe
-  and nicer to use from Clojure.  (You can still use the MDC if you like.)
+  "Logging context.  A structured alternative to the [MDC][] that supports
+  default values and nested contexts.  (You can still use the MDC if you like.)
 
   [MDC]: https://logback.qos.ch/manual/mdc.html
 
   Everything in here in scope of the log statement will be included in the log.
   Try to use fully qualified keywords to avoid naming conflicts with the core
-  log data.
-
-  ---
-
-  Why an atom AND a dynamic var?  The dynamic var allows this value to
-  differentiate between threads and dynamic scope, while the atom provides safe
-  alteration and the ability to set global context values."
-  (atom {}))
+  log data."
+  {})
 
 (defmacro with-context
   "Merge `context` onto the current logging `*context*`, creating a new scope
   around `body`."
   [context & body]
-  `(binding [*context* (atom (merge @*context* ~context))]
+  `(binding [*context* (merge *context* ~context)]
      ~@body))
+
+(defn set-default-context!
+  "Set the default value of the logging context."
+  [context]
+  (alter-var-root #'*context* (fn [_] context)))
 
 (def ^:private nop
   "The singleton NOPLoggingEventBuilder, used for checking if logging is enabled
@@ -81,7 +80,7 @@
       (as-> builder $
         (.setMessage $ (->str msg))
         (add-kv $ "logger.source" src)
-        (reduce-kv add-kv $ @*context*)
+        (reduce-kv add-kv $ *context*)
         (reduce-kv add-kv $ data)
         (reduce add-marker $ markers)
         (cond-> $

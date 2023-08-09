@@ -84,19 +84,14 @@ The core of any logging tool is being able to make logs:
 
 ### The logging context
 
-Sometimes you will want to log some additional data in every log, but don't want to add it manually to every logging call.  This is where Epilogue's "logging context" comes in.  It is a dynamic atom\* that contains that data and can be rebound as desired.
-
-\* It is a dynamic var, bound to an atom containing a map.  Anything within it (dynamic scope) during the log invocation will be included as additional structured data.  It is recommended to use fully-qualified keys as they can be overridden by the data included in the individual log invocations.
+Sometimes you will want to log some additional data in every log, but don't want to add it manually to every logging call.  This is where Epilogue's "logging context" comes in.  It is a dynamic var that contains that data and can be rebound as desired.
 
 ```clojure
 ;; This is the logging context.
 log/*context*
 
-;; Get the current value of the logging context.
-@log/*context*
-
-;; Add global entries to the logging context.
-(swap! log/*context* assoc :version "126bf8f7640989f39c3077933ae4e1c47e0a04eef")
+;; Set the default logging context.
+(log/set-default-context! {:version "126bf8f7640989f39c3077933ae4e1c47e0a04eef"})
 
 ;; Add entries within a dynamic scope.
 (log/with-context {:correlation-id (random-uuid)}
