@@ -1,6 +1,6 @@
 (defproject com.example/logging "1.0"
   :dependencies [[org.clojure/clojure            "1.11.1"]
-                 [com.kroo/epilogue              "0.3"]
+                 [com.kroo/epilogue              "0.4"]
                  ;; Use Logback-classic as the logging backend.
                  [ch.qos.logback/logback-classic "1.4.8"]
                  [com.kroo/typeset.logback       "0.2"]
