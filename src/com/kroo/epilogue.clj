@@ -28,16 +28,17 @@
   {})
 
 (defmacro with-context
-  "Merge `context` onto the current logging `*context*`, creating a new scope
-  around `body`."
-  [context & body]
-  `(binding [*context* (merge *context* ~context)]
+  "Merge `extra-context` onto the current logging `*context*`, creating a new
+  scope around `body`."
+  [extra-context & body]
+  `(binding [*context* (merge *context* ~extra-context)]
      ~@body))
 
 (defn set-default-context!
   "Set the default value of the logging context."
-  [context]
-  (alter-var-root #'*context* (fn [_] context)))
+  [value]
+  {:pre [(map? value)]}
+  (alter-var-root #'*context* (fn [_] value)))
 
 (def ^:private nop
   "The singleton NOPLoggingEventBuilder, used for checking if logging is enabled
