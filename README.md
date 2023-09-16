@@ -54,7 +54,7 @@ The core of any logging tool is being able to make logs:
 ;; Log at any logging level supported by SLF4J.
 (log/error "This will log at ERROR level." {:some "structured data", :to-add-to "the log"})
 (log/warn "This will log at WARN level." {:some-other "data"})
-(log/info "This will log at INFO level." {:some {:hi [4 5 6]})
+(log/info "This will log at INFO level." {:some {:hi [4 5 6]}})
 (log/debug "This will log at DEBUG level." {:foo "bar", :biz [1 2 3]})
 (log/trace "This will log at TRACE level." {:foo "bar"})
 
