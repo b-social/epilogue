@@ -1,5 +1,5 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1" :mvn/scope "provided"}
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         org.slf4j/slf4j-api {:mvn/version "2.0.7"}}
  :aliases
  {:dev {:extra-deps {org.slf4j/slf4j-simple {:mvn/version "2.0.7"}}}
