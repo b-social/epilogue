@@ -7,7 +7,7 @@ Simple Clojure logging facade for logging structured data via [SLF4J][] 2+.
 
 ## Rationale
 
-Logs are the epilogue of program execution.  They provide us valuable insights into how our programs really behaved.  While the world of Java logging is fraught with [complexity and competing solutions][Logging in Clojure], Clojure provides us with an excellent facade for these tools in [clojure.tools.logging][].  Unfortunately though, suffers from a critical limitation.  Logs are strings; no structured data.
+Logs are the epilogue of program execution.  They provide us valuable insights into how our programs really behaved.  While the world of Java logging is fraught with [complexity and competing solutions][Logging in Clojure], Clojure provides us with an excellent facade for these tools in [clojure.tools.logging][].  Unfortunately though, it suffers from a critical limitation.  Logs are strings; no structured data.
 
 While it would be great to use simpler logging solutions like [μ/log][mulog].  Many situations still require full integration with the Java logging mess.  Is there a half-way point?
 
