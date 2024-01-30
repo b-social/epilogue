@@ -2,9 +2,9 @@
  :deps  {org.clojure/clojure            {:mvn/version "1.11.1"}
          com.kroo/epilogue              {:mvn/version "0.4"}
          ;; Use Logback-classic as the logging backend.
-         ch.qos.logback/logback-classic {:mvn/version "1.4.8"}
+         ch.qos.logback/logback-classic {:mvn/version "1.4.14"}
          com.kroo/typeset.logback       {:mvn/version "0.3"}
          ;; Add SLF4J logging bridges to make logs from other logging libraries go via SLF4J.
-         org.slf4j/jul-to-slf4j         {:mvn/version "2.0.9"}
-         org.slf4j/jcl-over-slf4j       {:mvn/version "2.0.9"}
-         org.slf4j/log4j-over-slf4j     {:mvn/version "2.0.9"}}}
+         org.slf4j/jul-to-slf4j         {:mvn/version "2.0.11"}
+         org.slf4j/jcl-over-slf4j       {:mvn/version "2.0.11"}
+         org.slf4j/log4j-over-slf4j     {:mvn/version "2.0.11"}}}
