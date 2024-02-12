@@ -1,6 +1,6 @@
 {:paths ["src" "resources"]
  :deps  {org.clojure/clojure            {:mvn/version "1.11.1"}
-         com.kroo/epilogue              {:mvn/version "0.4"}
+         com.kroo/epilogue              {:mvn/version "local"}
          ;; Use Logback-classic as the logging backend.
          ch.qos.logback/logback-classic {:mvn/version "1.4.14"}
          com.kroo/typeset.logback       {:mvn/version "0.3"}

@@ -128,6 +128,7 @@
               forms)]
     (when (seq idxs) idxs)))
 
+; TODO change name to add-file-and-namespace ?
 (defn- preserve-form-meta [body]
   `(with-meta ~body
      (assoc (meta ~'&form) :file (str *file*), :namespace (str *ns*))))
@@ -170,8 +171,10 @@
                 "    - a sequence of SLF4J `markers` (or strings/keywords), and\n"
                 "    - an override logger namespace (`logger-ns`).")
       :arglists '~'([msg data & {:keys [cause markers logger-ns]}])}
-     [msg# data# & opts#]
-     `(log ~~(keyword level) ~msg# ~data# ~@opts#)))
+     ([msg#]
+      `(log ~~(keyword level) ~msg# {}))
+     ([msg# data# & opts#]
+      `(log ~~(keyword level) ~msg# ~data# ~@opts#))))
 
 ;; Generate convenience macros for the supported logging levels.
 (declare error warn info debug trace)

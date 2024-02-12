@@ -7,3 +7,8 @@
 (SLF4JBridgeHandler/install)
 
 (log/info "Log!" {:foo "bar"})
+
+(defn run [& args]
+  (log/info "Log!" {:foo "bar"})
+  (log/info "Log no data!"))
+
