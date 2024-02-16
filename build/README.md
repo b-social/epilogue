@@ -26,7 +26,7 @@ If there was no Git tag pointing to the commit, the jar will have the version: `
 
 ## Deploy
 
-Create a Git tag for the version to build (preferrably prefixed with `v`) pointing at the relevant commit.
+Create a Git tag for the version to build (preferably prefixed with `v`) pointing at the relevant commit.
 
 Run this command (replacing the username and password with your own and the version with the Git tag), which will test, build and deploy the jar to Clojars.
 

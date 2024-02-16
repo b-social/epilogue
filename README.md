@@ -79,6 +79,9 @@ The core of any logging tool is being able to make logs:
 
 ;; Programatically log at different levels with `log`.
 (log/log :warn "Warning about something" {:what? "something..."})
+
+;; Just log a message without data or options.
+(log/info "This is just a log message")
 ```
 
 
