@@ -1,12 +1,12 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        org.slf4j/slf4j-api {:mvn/version "2.0.11"}}
+ :deps {org.clojure/clojure {:mvn/version "1.11.2"}
+        org.slf4j/slf4j-api {:mvn/version "2.0.12"}}
  :aliases
- {:dev {:extra-deps {org.slf4j/slf4j-simple {:mvn/version "2.0.11"}}}
+ {:dev {:extra-deps {org.slf4j/slf4j-simple {:mvn/version "2.0.12"}}}
   ;; clj -T:build ...
   :build {:extra-paths ["build"]
           :deps {io.github.clojure/tools.build
-                 {:git/tag "v0.9.6", :git/sha "8e78bcc"}
+                 {:git/tag "v0.10.0", :git/sha "3a2c484"}
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
   ;; clj -M:lint
