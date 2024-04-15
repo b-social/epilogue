@@ -128,7 +128,6 @@
               forms)]
     (when (seq idxs) idxs)))
 
-; TODO change name to add-file-and-namespace ?
 (defn- preserve-form-meta [body]
   `(with-meta ~body
      (assoc (meta ~'&form) :file (str *file*), :namespace (str *ns*))))
