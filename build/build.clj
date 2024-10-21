@@ -1,5 +1,4 @@
 (ns build
-  (:refer-clojure :exclude [compile])
   (:require [clojure.tools.build.api :as b]
             [deps-deploy.deps-deploy :as dd]))
 
@@ -21,22 +20,12 @@
   [_opts]
   (b/delete {:path "target"}))
 
-(defn compile
-  [_opts]
-  (b/compile-clj {:basis basis
-                  :class-dir class-dir
-                  :src-dirs ["src"]
-                  :compile-opts {:direct-linking true}
-                  :bindings {#'clojure.core/*assert* false
-                             #'clojure.core/*warn-on-reflection* true}}))
-
 (defn jar
   "Build the JAR."
   [_opts]
   (clean nil)
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
-  (compile nil)
   (b/write-pom {:class-dir     class-dir
                 :lib           lib
                 :version       version
