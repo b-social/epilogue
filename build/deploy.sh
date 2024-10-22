@@ -20,8 +20,8 @@ pushd "deploy-$version"
 
 (
   set -e
-  clojure -T:build jar
-  clojure -T:build deploy
+  bb build jar
+  bb build deploy
 )
 
 popd

@@ -1,0 +1,20 @@
+{:tasks
+ {:init (do (defn sh [& args]
+              (binding [*out* *err*]
+                (apply println "+" args))
+              (apply shell args))
+            (def clj (partial sh "clojure")))
+  check {:doc "Run all pre-commit checks."
+         :depends [lint fmt test]}
+  lint {:doc  "Lint code."
+        :task (sh "clj-kondo" "--lint" "src:test")}
+  fmt  {:doc  "Format code."
+        :task (sh "cljfmt" "fix")}
+  test {:doc  "Run test suite."
+        :task (do
+                (clj "-T:build" "compile")
+                (apply clj "-X:test" *command-line-args*))}
+  build {:doc "Run build functions."
+         :task (apply clj "-T:build" *command-line-args*)}
+  outdated {:doc  "Check for outdated dependencies."
+            :task (clj "-T:antq" "outdated")}}}

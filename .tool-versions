@@ -1,0 +1,5 @@
+java temurin-11
+clojure latest
+babashka latest
+clj-kondo latest
+cljfmt latest

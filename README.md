@@ -27,9 +27,9 @@ This library is a simple Clojure logging facade that wraps SLF4J 2+ (the version
 
 ```clojure
 ;; tools.deps
-com.kroo/epilogue {:mvn/version "0.5"}
+com.kroo/epilogue {:mvn/version "0.6"}
 ;; Leiningen
-[com.kroo/epilogue "0.5"]
+[com.kroo/epilogue "0.6"]
 ```
 
 Before you can use Epilogue, you will probably want to first configure all logs to go through SLF4J and then configure a logging backend.  You can find an example Clojure project using Epilogue with [Logback][] in the "[examples](/examples/logback)" folder of this repository, which demonstrates how to set it up.
