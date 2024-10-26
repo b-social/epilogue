@@ -31,7 +31,7 @@
   "Merge `extra-context` onto the current logging `*context*`, creating a new
   scope around `body`."
   [extra-context & body]
-  `(binding [*context* (merge *context* ~extra-context)]
+  `(binding [*context* (into *context* ~extra-context)]
      ~@body))
 
 (defn set-default-context!
